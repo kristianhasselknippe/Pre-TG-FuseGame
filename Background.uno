@@ -141,7 +141,7 @@ public class Background : Fuse.Controls.Panel
 				_batch.Positions.Write(_mesh.Positions.GetFloat4(j).XYZ + positions[i]);
 				_batch.Normals.Write(_mesh.Normals.GetFloat4(j).XYZ);
 				_batch.TexCoord0s.Write(_mesh.TexCoords.GetFloat4(j).XY);
-				_batch.Attrib0Buffer.Write(float4(1.0f, 1.0f, 0.0f, 1.0f));
+				_batch.Attrib0Buffer.Write(float4(0.7f, 0.3f, 0.0f, 1.0f));
 				_batch.Attrib1Buffer.Write(float4(1.0f, 1.0f, 1.0f, 1.0f));
 			}
 
