@@ -6,7 +6,7 @@ using Fuse.Drawing.Batching;
 
 namespace FuseGame
 {
-	class ParticleBatcher : Panel
+	public class ParticleBatcher : Panel
 	{
 		public texture2D _particleTexture;
 

@@ -7,6 +7,7 @@ using Fuse.Controls;
 using Fuse.Drawing;
 using Fuse.Shapes;
 using Uno.Geometry;
+using FuseGame;
 
 public class GameObject : Panel
 {
@@ -303,10 +304,7 @@ public class Enemy : GameObject
 	{
 		Width = 50;
 		Height = 50;
-		Appearance = new Rectangle()
-		{
-			Fill = new SolidColor(float4(1,0,0,1))
-		};	
+		Appearance = new FuseGame.ParticleBatcher();
 	}
 
 	public Enemy(float2 pos) : this()
