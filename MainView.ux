@@ -3,15 +3,6 @@
 		<!--f:BloomEffect Softness="20" Multiplier="2" /-->
 		<Game>
 			<Rectangle ux:Binding="Appearance" Fill="Black" />
-			
-			<Panel>	
-				<Player>				
-					<Image Width="64" Height="64">
-						<Rotation Degrees="90" />
-						<texture2D ux:Path="Assets/player.png" />
-					</Image>
-				</Player>
-			</Panel>
 		</Game>
 	</Panel>
 </App>

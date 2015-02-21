@@ -1,14 +1,16 @@
 using Uno;
 using Uno.Collections;
+using Uno.Graphics;
+using Uno.Content;
 using Fuse;
 using Fuse.Controls;
 using Fuse.Drawing;
 using Fuse.Shapes;
-
+using Uno.Geometry;
 
 public class GameObject : Panel
 {
-	static Game Game { get; set; }
+	public static Game Game { get; set; }
 
 	public static void SetGame(Game g)
 	{
@@ -22,7 +24,7 @@ public class GameObject : Panel
 
 	public static void Instantiate(GameObject go)
 	{
-		Game.Children.Add(go);
+		Game.Add(go);
 		debug_log "Instantiated: " + go + ", TotalObjects: " + Game.Children.Count;
 	}
 
@@ -30,7 +32,7 @@ public class GameObject : Panel
 	{
 		if (Game.Children.Contains(go))
 		{
-			Game.Children.Remove(go);
+			Game.Remove(go);
 			debug_log "Destroyed: " + go + ", TotalObjects: " + Game.Children.Count;
 		}
 	}
@@ -41,14 +43,14 @@ public class GameObject : Panel
 	protected bool DisableUpdate { get; set; }
 
 	Translation _trans = new Translation();
-	protected float2 Position
+	public float2 Position
 	{
 		get { return _trans.Vector.XY; }
 		set { _trans.Vector = float3(value, 0); }
 	}
 
 	Rotation _rot = new Rotation();
-	protected float Rotation
+	public float Rotation
 	{
 		get { return _rot.Degrees; }
 		set { _rot.Degrees = value; }
@@ -59,6 +61,11 @@ public class GameObject : Panel
 	{
 		get { return _velocity; }
 		set { _velocity = value; }
+	}
+
+	public Rect BoundingBox
+	{
+		get { return new Rect(Position, ActualSize); }
 	}
 
 	protected GameObject()
@@ -84,6 +91,7 @@ public class GameObject : Panel
 public class Player : GameObject
 {
 
+	List<Powerup> _powerups = new List<Powerup>();
 
 	bool _wDown = false;
 	float Up { get { return _wDown ? 1 : 0; } }
@@ -96,10 +104,24 @@ public class Player : GameObject
 
 	public Player()
 	{
+		var image = new Image();
+		image.Texture = import Texture2D("../Assets/player.png");
+		image.Transforms.Add(new Rotation()
+		{
+			Degrees = 90
+		});
+		Appearance = image;
 		Width = 50;
 		Height = 50;
 		App.Current.Window.KeyPressed += KeyPressed;
 		App.Current.Window.KeyReleased += KeyReleased;
+
+		GameObject.Game.RegisterCollisionCallback(this, OnCollision);
+	}
+
+	void OnCollision(GameObject other)
+	{
+		debug_log "Collided : " + other;
 	}
 
 	public Player(float2 position) : this()
@@ -213,20 +235,109 @@ public class Bullet : GameObject
 
 }
 
+public class Powerup : GameObject
+{
+	public Powerup()
+	{
+		
+	}
+}
+
 public class Enemy : GameObject
 {
 	public Enemy()
 	{
+		Width = 50;
+		Height = 50;
+		Appearance = new Rectangle()
+		{
+			Fill = new SolidColor(float4(1,0,0,1))
+		};	
+	}
 
+	public Enemy(float2 pos) : this()
+	{
+		Position = pos;
 	}
 
 }
 
 public class Game : GameObject
 {
- 	public Game()
+	public Game()
 	{
 		GameObject.SetGame(this);
+
+		Add(new Player());
+		Add(new Enemy(float2(100,100)));
+		Add(new Enemy(float2(-100,100)));
+		Add(new Enemy(float2(100,-100)));
+		Add(new Enemy(float2(-100,-100)));
+	}
+
+	List<GameObject> _gameObjects = new List<GameObject>();
+	public List<GameObject> GameObjects
+	{
+		get { return _gameObjects; }
+	}
+
+ 	List<Collider> _colliders = new List<Collider>();
+
+	public void RegisterCollisionCallback(GameObject go, Action<GameObject> onCollision)
+	{
+		_colliders.Add(new Collider(go, onCollision));
+	}
+
+	protected override void OnUpdate(float dt)
+	{
+		for (int i = 0; i < _colliders.Count; i++)
+		{
+			var collider = _colliders[i];
+			for (int j = 0; j < _gameObjects.Count; j++)
+			{
+				var go = _gameObjects[j];
+				if (go == collider.GameObject) continue;
+
+				if (collider.AreColliding(go))
+				{
+					_colliders[i].OnCollision(go);
+				}
+			}
+		}
+	}
+
+	public void Add(GameObject go)
+	{
+		_gameObjects.Add(go);
+		Children.Add(go);
+	}
+
+	public void Remove(GameObject go)
+	{
+		if (_gameObjects.Contains(go))
+			_gameObjects.Remove(go);
+		if (Children.Contains(go))
+			Children.Remove(go);
+	}
+}
+
+public class Collider
+{
+	public readonly GameObject GameObject;
+	public readonly Action<GameObject> OnCollision;
+	public Collider(GameObject go, Action<GameObject> onCollision)
+	{
+		GameObject = go;
+		OnCollision = onCollision;
+	}
+
+	public bool AreColliding(GameObject other)
+	{
+		return 
+			!(other.BoundingBox.Left > GameObject.BoundingBox.Right || 
+        	other.BoundingBox.Right < GameObject.BoundingBox.Left || 
+        	other.BoundingBox.Top > GameObject.BoundingBox.Bottom ||
+        	other.BoundingBox.Bottom < GameObject.BoundingBox.Top);
 	}
 }
 
