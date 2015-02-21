@@ -122,6 +122,7 @@ public class Player : GameObject
 			Degrees = 90
 		});
 		Appearance = image;
+		Effects.Add(new PlayerEffect());
 		Width = 50;
 		Height = 50;
 		App.Current.Window.KeyPressed += KeyPressed;

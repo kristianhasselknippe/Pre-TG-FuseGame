@@ -12,6 +12,7 @@
         <PackageReference Name="Fuse.Drawing.Meshes" />
 
         <PackageReference Name="Fuse.Drawing.Primitives" />
+        <PackageReference Name="Fuse.Drawing.Planar" />
         <PackageReference Name="Fuse.Effects" />
         <PackageReference Name="Fuse.Elements" />
         <PackageReference Name="Fuse.Entities" />
@@ -34,5 +35,6 @@
         <SourceFile Name="MainView.ux.uno" />
 
         <SourceFile Name="Simulation/Simulation.uno" />
+        <SourceFile Name="Effects/PlayerEffect.uno" />
     </Files>
 </Project>
