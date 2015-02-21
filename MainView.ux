@@ -1,9 +1,13 @@
 <App xmlns:b="Outracks.UIThemes.MobileBlue" ux:Class="MainView" ClearColor="1, 1, 1, 1">
 	<Game>
 		<Rectangle ux:Binding="Appearance" Fill="Black" />
-		<Player>
-			<Rectangle ux:Binding="Appearance" Fill="Teal" />
-		</Player>
+		<f:BloomEffect Softness="20" Multiplier="2" />
+		<Panel>	
+			<Player>
+				<Image Width="64" Height="64">
+					<texture2D ux:Path="Assets/player.png" />
+				</Image>
+			</Player>
+		</Panel>
 	</Game>
-  	
 </App>

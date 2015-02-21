@@ -16,7 +16,10 @@
         <PackageReference Name="Outracks.UIThemes.MobileBlue" />
     </References>
     <Files>
+        <SourceFile Name="Effects/BloomEffect.uno" />
         <UXFile Name="MainView.ux" />
         <SourceFile Name="Simulation/Simulation.uno"/>
+        <SourceFile Name="Effects/EffectHelper.uno" />
+        <SourceFile Name="Effects/EffectHelper.Blur.uno" />
     </Files>
 </Project>
