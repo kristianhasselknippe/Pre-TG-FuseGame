@@ -1,13 +1,10 @@
 <App xmlns:f="FuseGame" xmlns:b="Outracks.UIThemes.MobileBlue" ux:Class="MainView" ClearColor="1, 1, 1, 1" ux:AutoCtor="false">
 	<f:BloomEffect CachingMode="Never" Softness="20" Multiplier="2" ux:Name="bloom">
+	<b:MobileBlueStyle/>
 		<Game>
 			<Background ux:Name="background" ux:Binding="Appearance" >
 				<Translation X="-240" />
 			</Background>
 		</Game>
-		
 	</f:BloomEffect>
-		
-
-		<!--Background ux:Name="background" /-->
 </App>

@@ -3,6 +3,7 @@ using Uno.Collections;
 using Uno.Graphics;
 using Uno.Content;
 using Fuse;
+using Fuse.Elements;
 using Fuse.Controls;
 using Fuse.Drawing;
 using Fuse.Shapes;
@@ -140,6 +141,8 @@ public class Player : GameObject
 			if (other is Shield)
 				Children.Add(((Shield)other).GetAppearance());
 		}
+		else if (other is Enemy)
+			GameObject.Game.Score = 0;
 	}
 
 	public Player(float2 position) : this()
@@ -289,6 +292,7 @@ public class Bullet : GameObject
 		{
 			GameObject.Destroy(other);
 			GameObject.Destroy(this);
+			GameObject.Game.Score += 1;
 		}
 		
 	}
@@ -309,10 +313,9 @@ public class Enemy : GameObject
 
 	public Enemy()
 	{
-		Width = 100;
-		Height = 100;
-		var pb = new FuseGame.ParticleBatcher();
-		pb.Radius = 50;
+		Width = 50;
+		Height = 50;
+		var pb = new FuseGame.ParticleBatcher(25, 70);
 		Appearance = pb;
 	}
 
@@ -333,13 +336,31 @@ public class Game : GameObject
 	public float SpawnEnemyRate = 1f;
 	public float SpawnPowerupRate = 0.1f;
 
+	TextBlock ScoreTextBlock = new TextBlock();
+
+	int _score = 0;
+	public int Score
+	{
+		get { return _score; }
+		set
+		{
+			_score = value;
+			ScoreTextBlock.Text = value + "";
+		}
+	}
+
 	Random rand;
 	public Game()
 	{
+		ScoreTextBlock.FontSize = 50;
+		ScoreTextBlock.Alignment = Fuse.Alignment.TopCenter;
+		ScoreTextBlock.Text = "0";
+		ScoreTextBlock.TextColor = float4(0,0,1,1);
+		Children.Add(ScoreTextBlock);
+
 		GameObject.SetGame(this);
 
 		Add(new RapidFire(float2(200,200)));
-		//Add(new Shield(float2(300,0)));
 		Add(new Player());
 
 	}
@@ -387,7 +408,11 @@ public class Game : GameObject
 
 	void SpawnPowerup()
 	{
-
+		var screenX = GameObject.ScreenSize.X * 0.5f;
+		var screenY = GameObject.ScreenSize.Y * 0.5f;
+		var x = _rand.NextFloat(-screenX, screenX);
+		var y = _rand.NextFloat(-screenY, screenY);
+		GameObject.Instantiate(new RapidFire(float2(x,y)));	
 	}
 
 	protected override void OnUpdate(float dt)
@@ -425,9 +450,10 @@ public class Game : GameObject
 
 		for (int i = 0; i < _colliders.Count; i++)
 		{
-			if (_colliders[i].GameObject == go)
+			var col = _colliders[i];
+			if (col.GameObject == go)
 			{
-				_colliders.RemoveAt(i);
+				_colliders.Remove(col);
 				return;
 			}
 		}
@@ -500,10 +526,8 @@ public class Shield : Powerup
 	{
 		Width = 15;
 		Height = 15;
-		var pb = new ParticleBatcher();
+		var pb = new ParticleBatcher(20, 100);
 		pb.ParticleSize = 8;
-		pb.ParticleCount = 100;
-		pb.Radius = 20;
 		pb.Color = float4(0.7f,0.7f,1,0.2f);
 		return pb;
 	}

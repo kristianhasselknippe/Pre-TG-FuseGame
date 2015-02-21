@@ -7,10 +7,8 @@
         <PackageReference Name="Fuse.Controls" />
         <PackageReference Name="Fuse.Designer" />
         <PackageReference Name="Fuse.Drawing" />
-
         <PackageReference Name="Fuse.Drawing.Batching" />
         <PackageReference Name="Fuse.Drawing.Meshes" />
-
         <PackageReference Name="Fuse.Drawing.Primitives" />
         <PackageReference Name="Fuse.Drawing.Planar" />
         <PackageReference Name="Fuse.Effects" />
@@ -30,10 +28,8 @@
         <SourceFile Name="Effects/EffectHelper.Blur.uno" />
         <SourceFile Name="Effects/EffectHelper.uno" />
         <UXFile Name="MainView.ux" />
-        <SourceFile Name="Particles/ParticleBatcher.uno" />
-
         <SourceFile Name="MainView.ux.uno" />
-
+        <SourceFile Name="Particles/ParticleBatcher.uno" />
         <SourceFile Name="Simulation/Simulation.uno" />
         <SourceFile Name="Effects/PlayerEffect.uno" />
     </Files>

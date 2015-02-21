@@ -12,8 +12,10 @@ namespace FuseGame
 
 		Batch _batch;
 
-		public ParticleBatcher()
+		public ParticleBatcher(float radius = 50, int particleCount = 70)
 		{			
+			ParticleCount = particleCount;
+			Radius = radius;
 			Initialize();
 		}
 
@@ -32,7 +34,7 @@ namespace FuseGame
 			int indexAdd = 0;
 			for(var i = 0;i < particleCount;i++)
 			{
-				float3 pos = float3((rand.NextFloat()-0.5f)*2, (rand.NextFloat()-0.5f)*2, 0)*Radius	;
+				float3 pos = float3((rand.NextFloat()-0.5f)*2, (rand.NextFloat()-0.5f)*2, 0) * Radius;
 
 				for(var j = 0; j < quadVertices.Length; j++)
 				{
@@ -53,8 +55,8 @@ namespace FuseGame
 		}
 
 		public float ParticleSize = 5;
-		public int ParticleCount = 70;
-		public float Radius = 50;
+		int ParticleCount = 70;
+		float Radius = 50;
 		public float4 Color = float4(0.9f, 0, 0.9f, 1);
 
 		protected override void OnDraw(DrawContext dc)
