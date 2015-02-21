@@ -1,3 +1,9 @@
 <App xmlns:b="Outracks.UIThemes.MobileBlue" ux:Class="MainView" ClearColor="1, 1, 1, 1">
-  
+	<Game>
+		<Rectangle ux:Binding="Appearance" Fill="Black" />
+		<Player>
+			<Rectangle ux:Binding="Appearance" Fill="Teal" />
+		</Player>
+	</Game>
+  	
 </App>
