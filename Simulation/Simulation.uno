@@ -132,7 +132,10 @@ public class Player : GameObject
 	void OnCollision(GameObject other)
 	{
 		if (other is Powerup)
+		{
 			_powerups.Add((Powerup)other);
+			GameObject.Destroy(other);
+		}
 	}
 
 	public Player(float2 position) : this()
@@ -151,7 +154,7 @@ public class Player : GameObject
 		if (Position.Y > screenSize.Y * 0.5f || Position.Y < screenSize.Y * -0.5f)
 			Position = float2(Position.X, -Position.Y);
 
-		ProcessPowerups();
+		ProcessPowerups(dt);
 
 		_shootTimer += dt;
 		if (IsShooting && _shootTimer > 1f/RateOfFire)
@@ -161,13 +164,19 @@ public class Player : GameObject
 		}
 	}
 
-	void ProcessPowerups()
+	void ProcessPowerups(float dt)
 	{
 		var hasRapidFire = false;
 		var hasShield = false;
 		var hasBoom = false;
 		for (int i = 0; i < _powerups.Count; i++)
 		{
+			_powerups[i].Duration -= dt;
+			if (_powerups[i].Duration < 0)
+			{
+				_powerups.RemoveAt(i);
+				continue;
+			}
 			if (_powerups[i] is RapidFire)
 				hasRapidFire = true;
 			else if (_powerups[i] is Shield)
@@ -390,6 +399,8 @@ public class Collider
 
 public class Powerup : GameObject
 {
+	public float Duration;
+
 	public Powerup(float2 pos)
 	{
 		Position = pos;
@@ -402,6 +413,7 @@ public class RapidFire : Powerup
 	{
 		Width = 30;
 		Height = 30;
+		Duration = 5;
 		Appearance = new Rectangle()
 		{
 			Fill = new SolidColor(float4(0,1,1,1))
