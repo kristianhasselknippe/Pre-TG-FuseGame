@@ -100,6 +100,7 @@ public class GameObject : Panel
 public class Player : GameObject
 {
 	float RateOfFire = 3f;
+	float RapidFireRate = 15f;
 
 	List<Powerup> _powerups = new List<Powerup>();
 
@@ -193,7 +194,7 @@ public class Player : GameObject
 			else if (_powerups[i] is Boom)
 				hasBoom = true;
 		}
-		RateOfFire = hasRapidFire ? 10 : 3;
+		RateOfFire = hasRapidFire ? RapidFireRate : 3;
 	}
 
 	void ProcessInput(float dt)
@@ -428,7 +429,7 @@ public class Game : GameObject
 
 				if (collider.AreColliding(go))
 				{
-					_colliders[i].OnCollision(go);
+					collider.OnCollision(go);
 				}
 			}
 		}
