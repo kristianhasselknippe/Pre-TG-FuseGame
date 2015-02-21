@@ -68,6 +68,13 @@ public class GameObject : Panel
 		get { return new Rect(Position, ActualSize); }
 	}
 
+	bool _isCollidable = true;
+	public bool IsCollidable
+	{
+		get { return _isCollidable; }
+		set { _isCollidable = value; }
+	}
+
 	protected GameObject()
 	{
 		Transforms.Add(_trans);
@@ -223,6 +230,18 @@ public class Bullet : GameObject
 		var y = Math.Sin(rot);
 		var dir = Vector.Normalize(float2(x,y));
 		Velocity = dir * BulletSpeed;
+
+		GameObject.Game.RegisterCollisionCallback(this, OnCollision);
+	}
+
+	void OnCollision(GameObject other)
+	{
+		if (other is Enemy)
+		{
+			GameObject.Destroy(other);
+			GameObject.Destroy(this);
+		}
+		
 	}
 
 	protected override void OnUpdate(float dt)
@@ -296,7 +315,7 @@ public class Game : GameObject
 			for (int j = 0; j < _gameObjects.Count; j++)
 			{
 				var go = _gameObjects[j];
-				if (go == collider.GameObject) continue;
+				if (!go.IsCollidable || go == collider.GameObject) continue;
 
 				if (collider.AreColliding(go))
 				{
