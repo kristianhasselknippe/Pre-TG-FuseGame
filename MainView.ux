@@ -1,8 +1,7 @@
 <App xmlns:f="FuseGame" xmlns:b="Outracks.UIThemes.MobileBlue" ux:Class="MainView" ClearColor="1, 1, 1, 1">
-	<Panel>
-		<!--f:BloomEffect Softness="20" Multiplier="2" /-->
+	<f:BloomEffect CachingMode="Never" Softness="20" Multiplier="2">
 		<Game>
 			<Rectangle ux:Binding="Appearance" Fill="Black" />
 		</Game>
-	</Panel>
+	</f:BloomEffect>
 </App>

@@ -2,10 +2,18 @@ using Uno;
 using Uno.Collections;
 using Fuse;
 using Fuse.Effects;
+using Fuse.Controls;
+using Uno;
+using Uno.Collections;
+using Uno.Graphics;
+using Uno.UX;
+using Fuse;
+using Fuse.Designer;
+using Fuse.Drawing.Primitives;
 
 namespace FuseGame
 {
-	public class BloomEffect : Effect
+	public class BloomEffect : Panel
 	{
 		float _softness;
 		public float Softness
@@ -16,9 +24,6 @@ namespace FuseGame
 				if (_softness != value)
 				{
 					_softness = value;
-
-					if (Active)
-						OnRenderingChanged();
 				}
 			}
 		}
@@ -38,65 +43,31 @@ namespace FuseGame
 				if (_offset != value)
 				{
 					_offset = value;
-
-					if (Active)
-						OnRenderingChanged();
 				}
 			}
 		}
 
 		EffectHelpers _helpers = new EffectHelpers();
 
-		private float Padding 
-		{
-			get 
-			{
-				return Uno.Math.Sqrt(Softness) * 10 * Element.AbsoluteZoom;
-			}
-		}
-
-		public override bool ExtendsRenderBounds { get { return true; } }
-		public override Rect RenderBounds
-		{
-			get
-			{
-				return Rect.Translate(Rect.Inflate(Element.RenderBounds, Padding), Offset);
-			}
-		}
-
-		public override bool Active
-		{
-			get
-			{
-				return true;
-			}
-		}
-
-		public BloomEffect() : base(EffectType.Overlay)
+		public BloomEffect()
 		{
 			Softness = 2;
 		}
 
-		public override void Render(DrawContext dc)
+		protected override void OnDraw(DrawContext dc)
 		{
 			float softness = Uno.Math.Sqrt(Softness) * 10;
-			int padding = (int)Math.Ceil(Padding);
+			var clientSize = Uno.Application.Current.Window.ClientSize;
+			
+			var temp = FramebufferPool.Lock(clientSize, Format.RGBA8888, true);
+			dc.PushRenderTarget(temp);
+			dc.Clear(float4(0), 1);
+			base.OnDraw(dc);
+			dc.PopRenderTarget();
 
-			Recti elementRect = GetLocalElementRect();
-			if (elementRect.Size.X + 2 * padding > texture2D.MaxSize ||
-			    elementRect.Size.Y + 2 * padding > texture2D.MaxSize)
-			{
-				debug_log "BloomEffect bigger than maximum texture size, dropping rendering (size: " + (elementRect.Size + padding * 2) + ", max-size: " + texture2D.MaxSize;
-				return;
-			}
-
-			float4x4 compositMatrix = GetCompositMatrix(dc);
-			var temp = Element.CaptureRegion(dc, elementRect, int2(padding), Matrix.Invert(compositMatrix));
-
-			var blur = _helpers.Blur(temp.ColorBuffer, dc, Element.AbsoluteZoom, softness * 0.016f);
-
-			float2 blitOffset = Offset - padding / Element.AbsoluteZoom;
-			_helpers.BlitAdd(dc, blur.ColorBuffer, temp.ColorBuffer, (int2)((float2)temp.Size / Element.AbsoluteZoom), blitOffset, compositMatrix, Multiplier);
+			float4x4 compositMatrix = GetDrawMatrix(dc);
+			var blur = _helpers.Blur(temp.ColorBuffer, dc, AbsoluteZoom, softness * 0.016f);
+			_helpers.BlitAdd(dc, blur.ColorBuffer, temp.ColorBuffer, (int2)((float2)temp.Size / AbsoluteZoom), float2(0,0), compositMatrix, Multiplier);
 
 			FramebufferPool.Release(blur);
 			FramebufferPool.Release(temp);
