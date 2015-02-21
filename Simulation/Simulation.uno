@@ -148,11 +148,7 @@ public class Player : GameObject
 
 	void Shoot()
 	{
-		var rot = Math.DegreesToRadians(Rotation);
-		var x = Math.Cos(rot);
-		var y = Math.Sin(rot);
-		var dir = Vector.Normalize(float2(x,y));
-		GameObject.Instantiate(new Bullet(Position, dir));
+		GameObject.Instantiate(new Bullet(Position, Rotation));
 	}
 
 	void KeyReleased(object sender, Uno.Platform.KeyEventArgs args)
@@ -179,25 +175,29 @@ public class Bullet : GameObject
 {
 	public float BulletSpeed = 10f;
 
-	public Bullet(float2 position, float2 direction)
+	public Bullet(float2 position, float rotation)
 	{
-		Width = 5;
-		Height = 15;
+		Width = 15;
+		Height = 5;
 		Appearance = new Rectangle()
 		{
 			Fill = new SolidColor(float4(1,0,0,1))
 		};
 		Position = position;
-		Rotation = Math.RadiansToDegrees(Math.Cos(direction.X));
-		Velocity = direction * BulletSpeed;
+		Rotation = rotation;
+		var rot = Math.DegreesToRadians(Rotation);
+		var x = Math.Cos(rot);
+		var y = Math.Sin(rot);
+		var dir = Vector.Normalize(float2(x,y));
+		Velocity = dir * BulletSpeed;
 	}
 
 	protected override void OnUpdate(float dt)
 	{
 		if (Vector.Distance(Position, float2(0,0)) > 2000)
 		{
-			Game.Destroy(this);
-		} 
+			GameObject.Destroy(this);
+		}
 	}
 
 }
@@ -211,12 +211,11 @@ public class Enemy : GameObject
 
 }
 
-public class Game : GameObject
+public class Game : Panel
 {
  	public Game()
 	{
 		GameObject.SetGame(this);
-		DisableUpdate = true;
 	}
 
 }
