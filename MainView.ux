@@ -1,0 +1,13 @@
+<App xmlns:b="Outracks.UIThemes.MobileBlue" ux:Class="MainView" ClearColor="1, 1, 1, 1">
+  <b:MobileBlueStyle  />
+	<DockPanel>
+		<StatusBarBackground DockPanel.Dock="Top" />
+		<ScrollViewer ClipToBounds="true">
+			<StackPanel>
+				<Slider />
+				<Button Text="Button" />
+				<Switch Alignment="Left" />
+			</StackPanel>
+		</ScrollViewer>
+	</DockPanel>
+</App>
