@@ -17,5 +17,6 @@
     </References>
     <Files>
         <UXFile Name="MainView.ux" />
+        <SourceFile Name="Simulation/Simulation.uno"/>
     </Files>
 </Project>
