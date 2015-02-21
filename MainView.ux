@@ -3,8 +3,9 @@
 		<Rectangle ux:Binding="Appearance" Fill="Black" />
 		<f:BloomEffect Softness="20" Multiplier="2" />
 		<Panel>	
-			<Player>
+			<Player>				
 				<Image Width="64" Height="64">
+					<Rotation Degrees="90" />
 					<texture2D ux:Path="Assets/player.png" />
 				</Image>
 			</Player>
