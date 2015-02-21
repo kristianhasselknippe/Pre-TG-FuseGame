@@ -13,6 +13,6 @@ public partial class MainView
 		
 		InitializeUX();
 		_musicPlayer = new MusicPlayer(import BundleFile("Audio/music.mp3"));
-		background.FftProvider = new FftProvider(_musicPlayer, 0.0f);
+		//background.FftProvider = new FftProvider(_musicPlayer, 0.0f);
 	}
 }

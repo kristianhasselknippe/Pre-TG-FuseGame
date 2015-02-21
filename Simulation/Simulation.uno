@@ -66,7 +66,7 @@ public class GameObject : Panel
 
 	public Rect BoundingBox
 	{
-		get { return new Rect(Position, ActualSize); }
+		get { return new Rect(Position-(ActualSize*0.5f), ActualSize); }
 	}
 
 	bool _isCollidable = true;
@@ -310,7 +310,9 @@ public class Enemy : GameObject
 	{
 		Width = 100;
 		Height = 100;
-		Appearance = new FuseGame.ParticleBatcher();
+		var pb = new FuseGame.ParticleBatcher();
+		pb.Radius = 50;
+		Appearance = pb;
 	}
 
 	public Enemy(float2 pos) : this()
@@ -418,6 +420,15 @@ public class Game : GameObject
 			_gameObjects.Remove(go);
 		if (Children.Contains(go))
 			Children.Remove(go);
+
+		for (int i = 0; i < _colliders.Count; i++)
+		{
+			if (_colliders[i].GameObject == go)
+			{
+				_colliders.RemoveAt(i);
+				return;
+			}
+		}
 	}
 }
 
