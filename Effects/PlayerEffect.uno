@@ -2,31 +2,28 @@ using Uno;
 using Fuse;
 using Fuse.Effects;
 using Uno.Graphics;
+using FuseGame.Audio;
 
 namespace FuseGame
 {
 	class PlayerEffect : Effect
 	{
+		FftProvider _fftProvider;
+		int numFoos = 0;
+
 		public PlayerEffect() : base(EffectType.Overlay)
 		{
+			_fftProvider = new FftProvider(MainView._musicPlayer, 0.0f);
+			_fftProvider.FftAvailable += Sound;
+		}
 
+		void Sound(object sender, float []array)
+		{
+			numFoos = (int)((array[100] / 200) * 5);
+			OnRenderingChanged();
 		}
 
 		public float Duration { get; set; }
-
-		Rect CenterKeepAspect(Rect bounds, float2 vSize)
-		{
-			var bSize = bounds.Size;
-			var bAspect = bSize.X / bSize.Y;
-			var vAspect = vSize.X / vSize.Y;
-
-			var size = bAspect < vAspect
-				? float2(bSize.X, bSize.X / vAspect)
-				: float2(bSize.Y * vAspect, bSize.Y);
-
-			var position = bounds.Center - size / 2;
-			return new Rect(position, size);
-		}
 
 		public override void Render(DrawContext dc)
 		{
@@ -42,9 +39,8 @@ namespace FuseGame
 
 			var original = Element.CaptureRegion(dc, elementRect, int2(0), Matrix.Invert(compositMatrix));
 
-
 			float step = 0.2f;
-			for(var i = 0;i < 5;++i)
+			for(var i = 0;i < numFoos;++i)
 			{
 				draw Fuse.Drawing.Planar.Image
 				{
