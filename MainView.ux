@@ -1,4 +1,4 @@
-<App xmlns:b="Outracks.UIThemes.MobileBlue" ux:Class="MainView" ClearColor="1, 1, 1, 1">
+<App xmlns:f="FuseGame" xmlns:b="Outracks.UIThemes.MobileBlue" ux:Class="MainView" ClearColor="1, 1, 1, 1">
 	<Game>
 		<Rectangle ux:Binding="Appearance" Fill="Black" />
 		<f:BloomEffect Softness="20" Multiplier="2" />
