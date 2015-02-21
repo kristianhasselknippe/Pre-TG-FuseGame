@@ -10,10 +10,9 @@ public partial class MainView
 
 	public MainView()
 	{
-		_musicPlayer = new MusicPlayer(import BundleFile("Audio/music.mp3"));
-		background.FftProvider = new FftProvider(_musicPlayer, 0.0f);
-		bloom.FftProvider = new FftProvider(_musicPlayer, 0.0f);
+		_musicPlayer = new MusicPlayer(import BundleFile("Audio/music.mp3"));		
 		InitializeUX();
-		//background.FftProvider = new FftProvider(_musicPlayer, 0.0f);
+		bloom.FftProvider = new FftProvider(_musicPlayer, 0.0f);
+		background.FftProvider = new FftProvider(_musicPlayer, 0.0f);
 	}
 }
