@@ -8,24 +8,30 @@ using Fuse.Shapes;
 
 public class GameObject : Panel
 {
-	static Game _game { get; set; }
+	static Game Game { get; set; }
+
 	public static void SetGame(Game g)
 	{
-		_game = g;
+		Game = g;
+	}
+
+	public static float2 ScreenSize
+	{
+		get { return Game.ActualSize; }
 	}
 
 	public static void Instantiate(GameObject go)
 	{
-		_game.Children.Add(go);
-		debug_log "Instantiated: " + go + ", TotalObjects: " + _game.Children.Count;
+		Game.Children.Add(go);
+		debug_log "Instantiated: " + go + ", TotalObjects: " + Game.Children.Count;
 	}
 
 	public static void 	Destroy(GameObject go)
 	{
-		if (_game.Children.Contains(go))
+		if (Game.Children.Contains(go))
 		{
-			_game.Children.Remove(go);
-			debug_log "Destroyed: " + go + ", TotalObjects: " + _game.Children.Count;
+			Game.Children.Remove(go);
+			debug_log "Destroyed: " + go + ", TotalObjects: " + Game.Children.Count;
 		}
 	}
 
@@ -104,7 +110,12 @@ public class Player : GameObject
 	protected override void OnUpdate(float dt)
 	{
 		ProcessInput(dt);
-	
+
+		var screenSize = GameObject.ScreenSize;
+		if (Position.X > screenSize.X * 0.5f || Position.X < screenSize.X * -0.5f)
+			Position = float2(-Position.X, Position.Y);
+		if (Position.Y > screenSize.Y * 0.5f || Position.Y < screenSize.Y * -0.5f)
+			Position = float2(Position.X, -Position.Y);
 	}
 
 	void ProcessInput(float dt)
@@ -211,12 +222,11 @@ public class Enemy : GameObject
 
 }
 
-public class Game : Panel
+public class Game : GameObject
 {
  	public Game()
 	{
 		GameObject.SetGame(this);
 	}
-
 }
 
