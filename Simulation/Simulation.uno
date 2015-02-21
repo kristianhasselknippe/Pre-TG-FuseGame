@@ -5,32 +5,54 @@ using Fuse.Controls;
 using Fuse.Drawing;
 
 
-public class Player : Fuse.Controls.Panel
-{
 
+public abstract class GameObject : Panel
+{
 	public float Acceleration = 5f;
 	public float RotationSpeed = 5f;
 
 	Translation _trans = new Translation();
-	float2 Position
+	protected float2 Position
 	{
 		get { return _trans.Vector.XY; }
 		set { _trans.Vector = float3(value, 0); }
 	}
 
 	Rotation _rot = new Rotation();
-	float Rotation
+	protected float Rotation
 	{
 		get { return _rot.Degrees; }
 		set { _rot.Degrees = value; }
 	}
 
 	float2 _velocity = float2();
-	float2 Velocity
+	protected float2 Velocity
 	{
 		get { return _velocity; }
 		set { _velocity = value; }
 	}
+
+	protected GameObject()
+	{
+		Transforms.Add(_trans);
+		Transforms.Add(_rot);
+		Update += OnBaseUpdate;
+	}
+
+	void OnBaseUpdate(object sender, EventArgs args)
+	{
+		var dt = Fuse.Time.FrameInterval;
+		OnUpdate(dt);
+	}
+
+	protected abstract void OnUpdate(float dt);
+
+}
+
+
+public class Player : GameObject
+{
+
 
 	bool _wDown = false;
 	float Up { get { return _wDown ? 1 : 0; } }
@@ -43,13 +65,10 @@ public class Player : Fuse.Controls.Panel
 
 	public Player()
 	{
-		Transforms.Add(_trans);
-		Transforms.Add(_rot);
 		Width = 50;
 		Height = 50;
 		App.Current.Window.KeyPressed += KeyPressed;
 		App.Current.Window.KeyReleased += KeyReleased;
-		Update += OnUpdate;
 	}
 
 	public Player(float2 position) : this()
@@ -57,9 +76,8 @@ public class Player : Fuse.Controls.Panel
 		Position = position;
 	}
 
-	void OnUpdate(object sender, EventArgs args)
+	protected override void OnUpdate(float dt)
 	{
-		var dt = Fuse.Time.FrameInterval;
 		ProcessInput(dt);
 		Simulate(dt);
 	}
@@ -125,12 +143,28 @@ public class Player : Fuse.Controls.Panel
 	}
 }
 
-public class Game : Panel
+public class Bullet : GameObject
 {
-	
+	public Bullet()
+	{
 
-	public Game()
+	}
+
+	protected override void OnUpdate(float dt)
+	{
+
+	}
+}
+
+public class Game : GameObject
+{
+
+ 	public Game()
 	{
 	}	
+	protected override void OnUpdate(float dt)
+	{
+
+	}
 }
 
