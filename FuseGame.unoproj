@@ -7,6 +7,7 @@
         <PackageReference Name="Fuse.Designer" />
         <PackageReference Name="Fuse.Drawing" />
         <PackageReference Name="Fuse.Drawing.Primitives" />
+        <PackageReference Name="Fuse.Drawing.Batching" />
         <PackageReference Name="Fuse.Effects" />
         <PackageReference Name="Fuse.Elements" />
         <PackageReference Name="Fuse.Entities" />
@@ -21,5 +22,6 @@
         <SourceFile Name="Simulation/Simulation.uno"/>
         <SourceFile Name="Effects/EffectHelper.uno" />
         <SourceFile Name="Effects/EffectHelper.Blur.uno" />
+        <SourceFile Name="Particles/ParticleBatcher.uno" />
     </Files>
 </Project>
