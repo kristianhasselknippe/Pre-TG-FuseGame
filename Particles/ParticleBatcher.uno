@@ -23,7 +23,7 @@ namespace FuseGame
 			var quadVertices = new [] {float3(0,0,0),float3(1,0,0),float3(1,1,0),float3(0,1,0)};
 			var quadIndices = new ushort[] {0,1,2,2,3,0};
 
-			int particleCount = 70;//maxVertices / quadVertices.Length;
+			int particleCount = ParticleCount;//maxVertices / quadVertices.Length;
 			int verticeCount = particleCount * quadVertices.Length;
 			int indicesCount = particleCount * quadIndices.Length;
 			_batch = new Batch(verticeCount, indicesCount, true);
@@ -32,7 +32,7 @@ namespace FuseGame
 			int indexAdd = 0;
 			for(var i = 0;i < particleCount;i++)
 			{
-				float3 pos = float3(rand.NextFloat(), rand.NextFloat(), 0)*50;
+				float3 pos = float3((rand.NextFloat()-0.5f)*2, (rand.NextFloat()-0.5f)*2, 0)*Radius	;
 
 				for(var j = 0; j < quadVertices.Length; j++)
 				{
@@ -52,6 +52,11 @@ namespace FuseGame
 			}
 		}
 
+		public float ParticleSize = 5;
+		public int ParticleCount = 70;
+		public float Radius = 50;
+		public float4 Color = float4(0.9f, 0, 0.9f, 1);
+
 		protected override void OnDraw(DrawContext dc)
 		{
 			InvalidateVisual();
@@ -61,17 +66,17 @@ namespace FuseGame
 			{
 				float dt: Fuse.Time.FrameInterval;
 				float time: Fuse.Time.FrameTime;
-				float2 size: float2(2, 2);
+				float2 size: float2(ParticleSize, ParticleSize);
 				float2 position: Attrib1.XY;
 
 				float2 dir: float2(Math.Cos(time + Attrib1.W), Math.Sin(time + Attrib1.W));
-				position: prev + dir * Math.Sin(time + Attrib1.W)*50;
+				position: prev + dir * Math.Sin(time + Attrib1.W)*Radius;
 
 				float4 p: Vector.Transform(float4(position + VertexPosition.XY*size, 0, 1), compositMatrix);
 				ClipPosition: Fuse.Spaces.PixelsToClipSpace(p.XY, dc.VirtualResolution);
 
 				float colorFactor: Math.Sin(time + Attrib1.W)*0.5f + 0.5f;
-				float4 ParticlePixel: float4(Math.Sin(time*2 + 1 + Attrib1.W)*0.1f + 0.9f, 0, Math.Sin(time*2 + Attrib1.W)*0.1f + 0.9f, 1);
+				float4 ParticlePixel: float4(Math.Sin(time*2 + 1 + Attrib1.W)*0.1f + Color.X, Color.Y, Math.Sin(time*2 + Attrib1.W)*0.1f + Color.Z, Color.W);
 				PixelColor: float4(ParticlePixel.XYZ, 1);
 				CullFace: PolygonFace.None;
 				DepthTestEnabled: false;

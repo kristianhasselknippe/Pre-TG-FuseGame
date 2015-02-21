@@ -136,6 +136,8 @@ public class Player : GameObject
 		{
 			_powerups.Add((Powerup)other);
 			GameObject.Destroy(other);
+			if (other is Shield)
+				Children.Add(((Shield)other).GetAppearance());
 		}
 	}
 
@@ -175,6 +177,8 @@ public class Player : GameObject
 			_powerups[i].Duration -= dt;
 			if (_powerups[i].Duration < 0)
 			{
+				if (Children.Contains(_powerups[i]))
+					Children.Remove(_powerups[i]);
 				_powerups.RemoveAt(i);
 				continue;
 			}
@@ -300,10 +304,12 @@ public class Bullet : GameObject
 
 public class Enemy : GameObject
 {
+	float EnemySpeed = 1f;
+
 	public Enemy()
 	{
-		Width = 50;
-		Height = 50;
+		Width = 100;
+		Height = 100;
 		Appearance = new FuseGame.ParticleBatcher();
 	}
 
@@ -312,21 +318,27 @@ public class Enemy : GameObject
 		Position = pos;
 	}
 
+	protected override void OnUpdate(float dt)
+	{
+		var dir = Vector.Normalize(-Position);
+		Velocity = dir * EnemySpeed;
+	}
 }
 
 public class Game : GameObject
-{
+{	
+	public float SpawnEnemyRate = 1f;
+	public float SpawnPowerupRate = 0.1f;
+
+	Random rand;
 	public Game()
 	{
 		GameObject.SetGame(this);
 
-		Add(new Player());
-		Add(new Enemy(float2(100,100)));
-		Add(new Enemy(float2(-100,100)));
-		Add(new Enemy(float2(100,-100)));
-		Add(new Enemy(float2(-100,-100)));
-
 		Add(new RapidFire(float2(200,200)));
+		//Add(new Shield(float2(300,0)));
+		Add(new Player());
+
 	}
 
 	List<GameObject> _gameObjects = new List<GameObject>();
@@ -342,8 +354,42 @@ public class Game : GameObject
 		_colliders.Add(new Collider(go, onCollision));
 	}
 
+	float _spawnEnemiesTimer = 0f;
+	float _spawnPowerupTimer = 0.0f;
+	void HandlerSpawning(float dt)
+	{
+		_spawnEnemiesTimer += dt;
+		if (_spawnEnemiesTimer > 1f / SpawnEnemyRate)
+		{
+			SpawnEnemy();
+			_spawnEnemiesTimer = 0f;
+		}
+		_spawnPowerupTimer += dt;
+		if (_spawnPowerupTimer > 1f / SpawnPowerupRate)
+		{
+			SpawnPowerup();
+			_spawnPowerupTimer = 0f;
+		}
+	}
+
+	Random _rand = new Random(934232);
+	void SpawnEnemy()
+	{
+		var ang = _rand.NextFloat(0, 2f*(float)Math.PI);
+		var x = Math.Cos(ang);
+		var y = Math.Sin(ang);
+		var pos = float2(x,y) * GameObject.ScreenSize;
+		GameObject.Instantiate(new Enemy(pos));
+	}
+
+	void SpawnPowerup()
+	{
+
+	}
+
 	protected override void OnUpdate(float dt)
 	{
+		HandlerSpawning(dt);
 		for (int i = 0; i < _colliders.Count; i++)
 		{
 			var collider = _colliders[i];
@@ -399,9 +445,15 @@ public class Powerup : GameObject
 {
 	public float Duration;
 
+	public virtual Panel GetAppearance()
+	{
+		return new Panel();
+	}
+
 	public Powerup(float2 pos)
 	{
 		Position = pos;
+		Appearance = GetAppearance();
 	}
 }
 
@@ -412,16 +464,36 @@ public class RapidFire : Powerup
 		Width = 30;
 		Height = 30;
 		Duration = 5;
-		Appearance = new Rectangle()
-		{
-			Fill = new SolidColor(float4(0,1,1,1))
-		};
+	}
+
+	public override Panel GetAppearance()
+	{
+		var panel = new Panel();
+		panel.Children.Add(new Rectangle()
+			{
+				Fill = new SolidColor(float4(1,0,0,1))
+			});
+		return panel;
 	}
 }
 
 public class Shield : Powerup
 {
-	public Shield(float2 pos) : base(pos){}
+	public Shield(float2 pos) : base(pos)
+	{
+	}
+
+	public override Panel GetAppearance()
+	{
+		Width = 15;
+		Height = 15;
+		var pb = new ParticleBatcher();
+		pb.ParticleSize = 8;
+		pb.ParticleCount = 100;
+		pb.Radius = 20;
+		pb.Color = float4(0.7f,0.7f,1,0.2f);
+		return pb;
+	}
 }
 
 public class Boom : Powerup
