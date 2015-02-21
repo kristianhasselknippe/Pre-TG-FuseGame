@@ -32,6 +32,8 @@ public class GameObject : Panel
 	public float Acceleration = 5f;
 	public float RotationSpeed = 5f;
 
+	protected bool DisableUpdate { get; set; }
+
 	Translation _trans = new Translation();
 	protected float2 Position
 	{
@@ -62,6 +64,7 @@ public class GameObject : Panel
 
 	void OnBaseUpdate(object sender, EventArgs args)
 	{
+		if (DisableUpdate) return;
 		var dt = Fuse.Time.FrameInterval;
 		OnUpdate(dt);
 		Position += Velocity;
@@ -149,7 +152,7 @@ public class Player : GameObject
 		var x = Math.Cos(rot);
 		var y = Math.Sin(rot);
 		var dir = Vector.Normalize(float2(x,y));
-		GameObject.Instantiate(new Bullet(dir));
+		GameObject.Instantiate(new Bullet(Position, dir));
 	}
 
 	void KeyReleased(object sender, Uno.Platform.KeyEventArgs args)
@@ -176,7 +179,7 @@ public class Bullet : GameObject
 {
 	public float BulletSpeed = 10f;
 
-	public Bullet(float2 direction)
+	public Bullet(float2 position, float2 direction)
 	{
 		Width = 5;
 		Height = 15;
@@ -184,6 +187,7 @@ public class Bullet : GameObject
 		{
 			Fill = new SolidColor(float4(1,0,0,1))
 		};
+		Position = position;
 		Rotation = Math.RadiansToDegrees(Math.Cos(direction.X));
 		Velocity = direction * BulletSpeed;
 	}
@@ -209,14 +213,11 @@ public class Enemy : GameObject
 
 public class Game : GameObject
 {
-
  	public Game()
 	{
 		GameObject.SetGame(this);
-	}	
-	protected override void OnUpdate(float dt)
-	{
-
+		DisableUpdate = true;
 	}
+
 }
 

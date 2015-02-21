@@ -18,10 +18,10 @@
     </References>
     <Files>
         <SourceFile Name="Effects/BloomEffect.uno" />
-        <UXFile Name="MainView.ux" />
-        <SourceFile Name="Simulation/Simulation.uno"/>
-        <SourceFile Name="Effects/EffectHelper.uno" />
         <SourceFile Name="Effects/EffectHelper.Blur.uno" />
         <SourceFile Name="Particles/ParticleBatcher.uno" />
+        <SourceFile Name="Effects/EffectHelper.uno" />
+        <UXFile Name="MainView.ux" />
+        <SourceFile Name="Simulation/Simulation.uno" />
     </Files>
 </Project>
