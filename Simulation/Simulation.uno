@@ -3,11 +3,32 @@ using Uno.Collections;
 using Fuse;
 using Fuse.Controls;
 using Fuse.Drawing;
+using Fuse.Shapes;
 
 
-
-public abstract class GameObject : Panel
+public class GameObject : Panel
 {
+	static Game _game { get; set; }
+	public static void SetGame(Game g)
+	{
+		_game = g;
+	}
+
+	public static void Instantiate(GameObject go)
+	{
+		_game.Children.Add(go);
+		debug_log "Instantiated: " + go + ", TotalObjects: " + _game.Children.Count;
+	}
+
+	public static void 	Destroy(GameObject go)
+	{
+		if (_game.Children.Contains(go))
+		{
+			_game.Children.Remove(go);
+			debug_log "Destroyed: " + go + ", TotalObjects: " + _game.Children.Count;
+		}
+	}
+
 	public float Acceleration = 5f;
 	public float RotationSpeed = 5f;
 
@@ -43,9 +64,10 @@ public abstract class GameObject : Panel
 	{
 		var dt = Fuse.Time.FrameInterval;
 		OnUpdate(dt);
+		Position += Velocity;
 	}
 
-	protected abstract void OnUpdate(float dt);
+	protected virtual void OnUpdate(float dt) {}
 
 }
 
@@ -79,7 +101,7 @@ public class Player : GameObject
 	protected override void OnUpdate(float dt)
 	{
 		ProcessInput(dt);
-		Simulate(dt);
+	
 	}
 
 	void ProcessInput(float dt)
@@ -99,11 +121,6 @@ public class Player : GameObject
 		Velocity += velDelta * dir;
 	}
 
-	void Simulate(float dt)
-	{
-		Position += Velocity;
-	}
-
 	void KeyPressed(object sender, Uno.Platform.KeyEventArgs args)
 	{
 		switch (args.Key)
@@ -120,7 +137,19 @@ public class Player : GameObject
 			case Uno.Platform.Key.D:
 				_dDown = true;
 				break;
+			case Uno.Platform.Key.Space:
+				Shoot();
+				break;
 		}
+	}
+
+	void Shoot()
+	{
+		var rot = Math.DegreesToRadians(Rotation);
+		var x = Math.Cos(rot);
+		var y = Math.Sin(rot);
+		var dir = Vector.Normalize(float2(x,y));
+		GameObject.Instantiate(new Bullet(dir));
 	}
 
 	void KeyReleased(object sender, Uno.Platform.KeyEventArgs args)
@@ -145,15 +174,37 @@ public class Player : GameObject
 
 public class Bullet : GameObject
 {
-	public Bullet()
-	{
+	public float BulletSpeed = 10f;
 
+	public Bullet(float2 direction)
+	{
+		Width = 5;
+		Height = 15;
+		Appearance = new Rectangle()
+		{
+			Fill = new SolidColor(float4(1,0,0,1))
+		};
+		Rotation = Math.RadiansToDegrees(Math.Cos(direction.X));
+		Velocity = direction * BulletSpeed;
 	}
 
 	protected override void OnUpdate(float dt)
 	{
+		if (Vector.Distance(Position, float2(0,0)) > 2000)
+		{
+			Game.Destroy(this);
+		} 
+	}
+
+}
+
+public class Enemy : GameObject
+{
+	public Enemy()
+	{
 
 	}
+
 }
 
 public class Game : GameObject
@@ -161,6 +212,7 @@ public class Game : GameObject
 
  	public Game()
 	{
+		GameObject.SetGame(this);
 	}	
 	protected override void OnUpdate(float dt)
 	{
