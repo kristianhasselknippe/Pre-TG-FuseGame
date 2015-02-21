@@ -2,11 +2,15 @@
 <Project Format="1.0">
     <RootNamespace>FuseGame</RootNamespace>
     <References>
+        <PackageReference Name="Experimental.ApiBindings.WebAudio" />
         <PackageReference Name="Fuse.Animations" />
         <PackageReference Name="Fuse.Controls" />
         <PackageReference Name="Fuse.Designer" />
         <PackageReference Name="Fuse.Drawing" />
-        <PackageReference Name="Fuse.Drawing.Batching" Version="0.1.0" />
+
+        <PackageReference Name="Fuse.Drawing.Batching" />
+        <PackageReference Name="Fuse.Drawing.Meshes" />
+
         <PackageReference Name="Fuse.Drawing.Primitives" />
         <PackageReference Name="Fuse.Effects" />
         <PackageReference Name="Fuse.Elements" />
@@ -19,11 +23,16 @@
         <PackageReference Name="Uno.Geometry" Version="0.1.0" />
     </References>
     <Files>
+        <SourceFile Name="Audio/MusicPlayer.uno" />
+        <SourceFile Name="Background.uno" />
         <SourceFile Name="Effects/BloomEffect.uno" />
         <SourceFile Name="Effects/EffectHelper.Blur.uno" />
         <SourceFile Name="Effects/EffectHelper.uno" />
         <UXFile Name="MainView.ux" />
         <SourceFile Name="Particles/ParticleBatcher.uno" />
+
+        <SourceFile Name="MainView.ux.uno" />
+
         <SourceFile Name="Simulation/Simulation.uno" />
     </Files>
 </Project>
