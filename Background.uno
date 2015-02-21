@@ -27,7 +27,7 @@ public class Background : Fuse.Controls.Panel
 		}
 	}
 
-	float2 _cubeOffset = float2(3f,3f);
+	float2 _cubeOffset = float2(4f,4f);
 	public float2 CubeOffset
 	{
 		get { return _cubeOffset; }
@@ -141,7 +141,7 @@ public class Background : Fuse.Controls.Panel
 				_batch.Positions.Write(_mesh.Positions.GetFloat4(j).XYZ + positions[i]);
 				_batch.Normals.Write(_mesh.Normals.GetFloat4(j).XYZ);
 				_batch.TexCoord0s.Write(_mesh.TexCoords.GetFloat4(j).XY);
-				_batch.Attrib0Buffer.Write(float4(1.0f, 0.0f, 0.0f, 1.0f));
+				_batch.Attrib0Buffer.Write(float4(1.0f, 1.0f, 0.0f, 1.0f));
 				_batch.Attrib1Buffer.Write(float4(1.0f, 1.0f, 1.0f, 1.0f));
 			}
 

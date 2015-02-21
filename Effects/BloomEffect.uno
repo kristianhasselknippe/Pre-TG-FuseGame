@@ -10,11 +10,39 @@ using Uno.UX;
 using Fuse;
 using Fuse.Designer;
 using Fuse.Drawing.Primitives;
+using FuseGame.Audio;
 
 namespace FuseGame
 {
 	public class BloomEffect : Panel
 	{
+
+		FftProvider _fftProvider;
+		public FftProvider FftProvider
+		{
+			get { return _fftProvider; }
+			set
+			{
+				if (_fftProvider != null)
+				{
+					_fftProvider.FftAvailable -= OnFftAvailable;
+				}
+
+				_fftProvider = value;
+
+				if (_fftProvider != null)
+				{
+					_fftProvider.FftAvailable += OnFftAvailable;
+				}
+			}
+		}
+
+		void OnFftAvailable(object sender, float[] fftData)
+		{
+			Multiplier = fftData[1] / 128f;
+			Offset = float2(fftData[2] / 128f, fftData[3] / 128f);
+		}
+
 		float _softness;
 		public float Softness
 		{

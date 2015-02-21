@@ -38,7 +38,6 @@ namespace FuseGame.Audio
 				_lastPushTime = Fuse.Time.FrameTime;
 				if (FftAvailable != null)
 				{
-					debug_log("FFTR");
 					FftAvailable(this, fft);
 				}
 			}

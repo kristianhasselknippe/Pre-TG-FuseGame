@@ -421,6 +421,7 @@ public class Game : GameObject
 		if (Children.Contains(go))
 			Children.Remove(go);
 
+
 		for (int i = 0; i < _colliders.Count; i++)
 		{
 			if (_colliders[i].GameObject == go)
