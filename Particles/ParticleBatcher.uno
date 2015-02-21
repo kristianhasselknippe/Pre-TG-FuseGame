@@ -77,10 +77,5 @@ namespace FuseGame
 				DepthTestEnabled: false;
 			};
 		}
-
-		/*static float Rand(float2 co)
-		{
-		    return Math.Fract(Math.Sin(Vector.Dot(co.XY, float2(12.9898f,78.233f))) * 43758.5453f);
-		}*/
 	}
 }
