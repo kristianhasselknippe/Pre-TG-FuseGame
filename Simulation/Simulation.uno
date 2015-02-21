@@ -97,6 +97,7 @@ public class GameObject : Panel
 
 public class Player : GameObject
 {
+	float RateOfFire = 3f;
 
 	List<Powerup> _powerups = new List<Powerup>();
 
@@ -108,6 +109,8 @@ public class Player : GameObject
 	float Down { get { return _sDown ? -1 : 0; } }
 	bool _dDown = false;
 	float Right { get { return _dDown ? 1 : 0; } }
+	bool _spaceDown = false;
+	bool IsShooting { get { return _spaceDown; } }
 
 	public Player()
 	{
@@ -128,7 +131,8 @@ public class Player : GameObject
 
 	void OnCollision(GameObject other)
 	{
-		debug_log "Collided : " + other;
+		if (other is Powerup)
+			_powerups.Add((Powerup)other);
 	}
 
 	public Player(float2 position) : this()
@@ -136,6 +140,7 @@ public class Player : GameObject
 		Position = position;
 	}
 
+	float _shootTimer = 0f;
 	protected override void OnUpdate(float dt)
 	{
 		ProcessInput(dt);
@@ -145,6 +150,32 @@ public class Player : GameObject
 			Position = float2(-Position.X, Position.Y);
 		if (Position.Y > screenSize.Y * 0.5f || Position.Y < screenSize.Y * -0.5f)
 			Position = float2(Position.X, -Position.Y);
+
+		ProcessPowerups();
+
+		_shootTimer += dt;
+		if (IsShooting && _shootTimer > 1f/RateOfFire)
+		{
+			Shoot();
+			_shootTimer = 0.0f;
+		}
+	}
+
+	void ProcessPowerups()
+	{
+		var hasRapidFire = false;
+		var hasShield = false;
+		var hasBoom = false;
+		for (int i = 0; i < _powerups.Count; i++)
+		{
+			if (_powerups[i] is RapidFire)
+				hasRapidFire = true;
+			else if (_powerups[i] is Shield)
+				hasShield = true;
+			else if (_powerups[i] is Boom)
+				hasBoom = true;
+		}
+		RateOfFire = hasRapidFire ? 10 : 3;
 	}
 
 	void ProcessInput(float dt)
@@ -181,7 +212,7 @@ public class Player : GameObject
 				_dDown = true;
 				break;
 			case Uno.Platform.Key.Space:
-				Shoot();
+				_spaceDown = true;
 				break;
 		}
 	}
@@ -206,6 +237,9 @@ public class Player : GameObject
 				break;
 			case Uno.Platform.Key.D:
 				_dDown = false;
+				break;
+			case Uno.Platform.Key.Space:
+				_spaceDown = false;
 				break;
 		}
 	}
@@ -254,14 +288,6 @@ public class Bullet : GameObject
 
 }
 
-public class Powerup : GameObject
-{
-	public Powerup()
-	{
-		
-	}
-}
-
 public class Enemy : GameObject
 {
 	public Enemy()
@@ -292,6 +318,8 @@ public class Game : GameObject
 		Add(new Enemy(float2(-100,100)));
 		Add(new Enemy(float2(100,-100)));
 		Add(new Enemy(float2(-100,-100)));
+
+		Add(new RapidFire(float2(200,200)));
 	}
 
 	List<GameObject> _gameObjects = new List<GameObject>();
@@ -360,3 +388,33 @@ public class Collider
 	}
 }
 
+public class Powerup : GameObject
+{
+	public Powerup(float2 pos)
+	{
+		Position = pos;
+	}
+}
+
+public class RapidFire : Powerup
+{
+	public RapidFire(float2 pos) : base(pos)
+	{
+		Width = 30;
+		Height = 30;
+		Appearance = new Rectangle()
+		{
+			Fill = new SolidColor(float4(0,1,1,1))
+		};
+	}
+}
+
+public class Shield : Powerup
+{
+	public Shield(float2 pos) : base(pos){}
+}
+
+public class Boom : Powerup
+{
+	public Boom(float2 pos) : base(pos){}
+}
